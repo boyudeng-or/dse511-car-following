@@ -7,6 +7,7 @@ from carfollow import (
     IDM,
     KeepSpeed,
     N_GROUPS,
+    advance,
     check_model,
     history_at,
     iter_pairs,
@@ -61,6 +62,16 @@ def test_history_has_the_agreed_shape(table):
     assert history_at(pair, HISTORY_STEPS - 1).shape == (HISTORY_STEPS, 3)
     with pytest.raises(IndexError):
         history_at(pair, HISTORY_STEPS - 2)
+
+
+@needs_sample
+def test_replaying_real_accel_reproduces_every_pair(table):
+    for pair in iter_pairs(table):
+        x, v = pair["position_m"].iloc[0], pair["speed_mps"].iloc[0]
+        for a in pair["accel_mps2"].iloc[:-1]:
+            x, v = advance(x, v, a)
+        assert abs(x - pair["position_m"].iloc[-1]) < 0.05
+        assert abs(v - pair["speed_mps"].iloc[-1]) < 0.01
 
 
 @needs_sample

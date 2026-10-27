@@ -63,6 +63,10 @@ returns all scores for one model on one table. No private metrics.
 | Drive | Gap error and crashes when the model drives 30 s behind the real leader |
 | Spread | Distance between simulated and real time-headway distributions |
 
+Simulators move a car with `carfollow.kinematics.advance` only. The table is
+built so that replaying the real `accel_mps2` through it reproduces the real
+trajectory exactly; a perfect model therefore scores zero Drive error.
+
 ## Getting started
 
 ```bash
@@ -100,7 +104,9 @@ IDM.textbook().accel(history_at(pair, 29))    # first prediction needs 30 rows
 - one lane and 6 minutes only;
 - `gap_m` assumes every leader is 4.5 m long;
 - position is smoothed (2.1 s Savitzky–Golay window) before taking speed and
-  acceleration, because raw NGSIM positions are noisy.
+  acceleration, because raw NGSIM positions are noisy. Position is then
+  re-integrated from speed, and acceleration is the forward difference of
+  speed, so the data obey `advance` exactly.
 
 The column names will not change between the sample and the full data, so
 code written on the sample keeps working.

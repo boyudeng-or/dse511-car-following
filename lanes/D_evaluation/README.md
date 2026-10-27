@@ -18,6 +18,8 @@ comparison table and the final figures.
 
 Start with `KeepSpeed()` and `IDM.textbook()` from `carfollow.baselines`:
 no training needed. The sample has `leader_position_m` and
-`leader_speed_mps` to replay the real leader during a rollout. Simulator
-update for one 0.1 s step (suggested): `v += a*dt`, `x += v*dt` (speed
-clipped at 0), with a crash when `gap_m <= 0`.
+`leader_speed_mps` to replay the real leader during a rollout. Move the
+follower with `carfollow.kinematics.advance` only: the table is built so that
+replaying the real `accel_mps2` reproduces the real trajectory exactly (a test
+checks this), so a perfect model scores zero Drive error. Count a crash when
+the simulated gap reaches zero.

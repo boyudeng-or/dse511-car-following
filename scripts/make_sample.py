@@ -41,11 +41,15 @@ def smooth_trajectories(raw: pd.DataFrame) -> pd.DataFrame:
     for _, t in df.groupby("traj_id", sort=False):
         if len(t) < SMOOTH_WINDOW:
             continue
-        x = t["position_m"].to_numpy()
-        t = t.copy()
-        t["position_m"] = savgol_filter(x, SMOOTH_WINDOW, SMOOTH_ORDER)
-        t["speed_mps"] = np.clip(savgol_filter(x, SMOOTH_WINDOW, SMOOTH_ORDER, deriv=1, delta=DT), 0.0, None)
-        t["accel_mps2"] = savgol_filter(x, SMOOTH_WINDOW, SMOOTH_ORDER, deriv=2, delta=DT)
+        raw_x = t["position_m"].to_numpy()
+        v = np.clip(savgol_filter(raw_x, SMOOTH_WINDOW, SMOOTH_ORDER, deriv=1, delta=DT), 0.0, None)
+        # Position is integrated from speed and accel is a forward difference of speed,
+        # so carfollow.kinematics.advance replays the data exactly.
+        x = savgol_filter(raw_x, SMOOTH_WINDOW, SMOOTH_ORDER)[0] + np.concatenate([[0.0], np.cumsum(v[:-1]) * DT])
+        t = t.iloc[:-1].copy()
+        t["position_m"] = x[:-1]
+        t["speed_mps"] = v[:-1]
+        t["accel_mps2"] = np.diff(v) / DT
         parts.append(t)
     return pd.concat(parts, ignore_index=True)
 
@@ -73,7 +77,8 @@ def cut_pairs(df: pd.DataFrame) -> pd.DataFrame:
     run_min_gap = df.groupby("run")["gap_m"].transform("min")
     df = df[(run_size >= MIN_PAIR_ROWS) & (run_min_gap > 0)].copy()
 
-    df["driver_id"] = df["traj_id"]
+    df["driver_id"] = df["vehicle_id"].astype(str)
+    df["leader_id"] = df["leader_id"].str.split("_").str[0]
     df["pair_id"] = df["driver_id"] + "->" + df["leader_id"] + "@" + df.groupby("run")["global_time"].transform("min").astype(str)
     df["global_time_ms"] = df["global_time"]
     df["t_s"] = (df["global_time"] - df.groupby("run")["global_time"].transform("min")) / 1000.0
@@ -116,7 +121,9 @@ def main() -> None:
         "rows_per_group": {int(k): int(v) for k, v in table["driver_group"].value_counts().sort_index().items()},
         "notes": [
             "Units converted from ft to m.",
-            f"Position smoothed with a Savitzky-Golay filter ({SMOOTH_WINDOW} rows, order {SMOOTH_ORDER}); speed and acceleration are its derivatives.",
+            f"Speed is the derivative of a Savitzky-Golay fit to position ({SMOOTH_WINDOW} rows, order {SMOOTH_ORDER}).",
+            "position(t+1) = position(t) + speed(t) * dt and accel(t) = (speed(t+1) - speed(t)) / dt, so carfollow.kinematics.advance replays every pair exactly.",
+            "driver_id is the physical vehicle, so a car that leaves and re-enters the lane stays in one driver_group.",
             f"gap_m assumes every leader is {NOMINAL_LEADER_LENGTH_M} m long; the full dataset will use real vehicle lengths.",
             "Leader = next car ahead in the same lane at the same time; a pair ends when the leader changes or either car leaves the lane.",
             f"Pairs shorter than {MIN_PAIR_ROWS * DT:.0f} s are dropped.",
