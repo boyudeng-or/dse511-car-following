@@ -1,0 +1,25 @@
+# Data never goes into Git (size + NGSIM license). Share it through Teams.
+data/
+*.csv
+*.parquet
+*.zip
+
+# Models and outputs
+*.pt
+*.pkl
+*.joblib
+outputs/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
