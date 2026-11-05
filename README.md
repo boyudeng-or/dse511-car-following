@@ -111,6 +111,39 @@ IDM.textbook().accel(history_at(pair, 29))    # first prediction needs 30 rows
 The column names will not change between the sample and the full data, so
 code written on the sample keeps working.
 
+## The full data (version 1, 4 Nov)
+
+`pairs_full.csv`: NGSIM US-101, main lanes 1–5, all 45 minutes (07:50–08:35)
+at 10 Hz. About 3.68 million rows, 8,301 pairs, 5,995 drivers, about 735,000
+rows per driver group. Download it from the Teams channel and put it at
+`data/full/pairs_full.csv`, then:
+
+```python
+from carfollow import FULL_PATH, load_table
+table = load_table(FULL_PATH)
+```
+
+Rebuild it yourself (needs internet, about 10 minutes):
+
+```bash
+python scripts/download_ngsim.py --out data/raw/us101
+python scripts/make_full.py data/raw/us101
+```
+
+What changed from the sample (details in `pairs_full.meta.json`):
+
+- all five main lanes and all three 15-minute periods; lane 6 (auxiliary) and
+  lanes 7–8 (ramps) are left out because most movement there is merging;
+- `gap_m` uses the leader's real length (median 4.57 m, from 1.7 m motorcycles
+  to 23 m trucks);
+- NGSIM reuses vehicle IDs across periods; a reused ID becomes its own
+  `driver_id` with a suffix, for example `1234.1`;
+- the portal copy repeats every row between 08:06 and 08:16; one copy is kept.
+
+Known limits: 0.004% of rows still have extreme accelerations (beyond ±8 m/s²)
+from tracking noise; 98% of rows lie between −1.9 and 1.8 m/s². The smallest
+gaps are under 1 m in stopped traffic.
+
 ## How we work
 
 - Work in your own lane folder. To change `carfollow/` or another lane's

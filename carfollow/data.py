@@ -9,12 +9,13 @@ from .schema import COLUMNS, validate
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SAMPLE_PATH = REPO_ROOT / "data" / "sample" / "pairs_sample.csv"
+FULL_PATH = REPO_ROOT / "data" / "full" / "pairs_full.csv"
 
 
 def load_table(path: Path = SAMPLE_PATH) -> pd.DataFrame:
     if not Path(path).exists():
         raise FileNotFoundError(
-            f"{path} not found. Download pairs_sample.csv from the Teams channel into data/sample/."
+            f"{path} not found. Download {Path(path).name} from the Teams channel into {Path(path).parent.name}/ under data/."
         )
     df = pd.read_csv(path, dtype={"pair_id": "string", "driver_id": "string", "leader_id": "string"})
     df = df.astype(COLUMNS).sort_values(["pair_id", "t_s"], ignore_index=True)
