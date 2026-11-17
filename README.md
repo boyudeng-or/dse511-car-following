@@ -93,7 +93,11 @@ table = load_table()                          # validated sample
 train, test = split_by_group(table, test_group=0)
 pair = next(iter_pairs(test))
 IDM.textbook().accel(history_at(pair, 29))    # first prediction needs 30 rows
+IDM.calibrated().accel(history_at(pair, 29))  # one shared set fit on pairs_full
 ```
+
+Calibrated parameters and how they were fit: `lanes/A_data_idm/idm_calibrated.json`
+(rebuild with `python scripts/calibrate_idm.py`).
 
 ## The sample (week 1)
 

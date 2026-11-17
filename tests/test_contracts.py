@@ -21,24 +21,39 @@ def make_history(gap, speed, closing):
     return np.tile([gap, speed, closing], (HISTORY_STEPS, 1)).astype(float)
 
 
-@pytest.mark.parametrize("model", [KeepSpeed(), IDM.textbook()])
+@pytest.mark.parametrize("model", [KeepSpeed(), IDM.textbook(), IDM.calibrated()])
 def test_baselines_fit_the_plug(model):
     check_model(model)
 
 
 def test_idm_speeds_up_on_an_empty_road():
     assert IDM.textbook().accel(make_history(gap=200.0, speed=10.0, closing=0.0)) > 0
+    assert IDM.calibrated().accel(make_history(gap=200.0, speed=10.0, closing=0.0)) > 0
 
 
 def test_idm_brakes_when_closing_in():
     assert IDM.textbook().accel(make_history(gap=8.0, speed=20.0, closing=5.0)) < 0
+    assert IDM.calibrated().accel(make_history(gap=8.0, speed=20.0, closing=5.0)) < 0
 
 
 def test_idm_settles_at_equilibrium_gap():
-    idm = IDM.textbook()
-    v = 15.0
-    s_eq = (idm.s0 + v * idm.T) / np.sqrt(1 - (v / idm.v0) ** idm.delta)
-    assert abs(idm.accel(make_history(gap=s_eq, speed=v, closing=0.0))) < 1e-9
+    for idm in (IDM.textbook(), IDM.calibrated()):
+        v = 15.0
+        s_eq = (idm.s0 + v * idm.T) / np.sqrt(1 - (v / idm.v0) ** idm.delta)
+        assert abs(idm.accel(make_history(gap=s_eq, speed=v, closing=0.0))) < 1e-9
+
+
+def test_calibrated_params_match_json_when_present():
+    from pathlib import Path
+    import json
+
+    path = Path(__file__).resolve().parents[1] / "lanes" / "A_data_idm" / "idm_calibrated.json"
+    if not path.exists():
+        pytest.skip("idm_calibrated.json not present")
+    params = json.loads(path.read_text(encoding="utf-8"))["params"]
+    idm = IDM.calibrated()
+    for key in ("v0", "T", "s0", "a_max", "b"):
+        assert abs(getattr(idm, key) - params[key]) < 1e-9
 
 
 needs_sample = pytest.mark.skipif(not SAMPLE_PATH.exists(), reason="data/sample/pairs_sample.csv not downloaded")

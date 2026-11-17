@@ -1,0 +1,128 @@
+{
+  "model": "IDM",
+  "name": "idm_calibrated",
+  "source_csv": "data/full/pairs_full.csv",
+  "delta_fixed": 4.0,
+  "accel_clip_mps2": 8.0,
+  "max_rows": 400000,
+  "seed": 517,
+  "n_rows_used": 400000,
+  "loss": "linear least squares on accel residual",
+  "bounds": {
+    "lo": {
+      "v0": 10.0,
+      "T": 0.5,
+      "s0": 1.0,
+      "a_max": 0.5,
+      "b": 1.0
+    },
+    "hi": {
+      "v0": 40.0,
+      "T": 3.0,
+      "s0": 5.0,
+      "a_max": 2.5,
+      "b": 3.5
+    }
+  },
+  "params": {
+    "v0": 19.256901,
+    "T": 0.525609,
+    "s0": 1.504281,
+    "a_max": 0.5,
+    "b": 3.5
+  },
+  "textbook_params": {
+    "v0": 30.0,
+    "T": 1.5,
+    "s0": 2.0,
+    "a_max": 1.0,
+    "b": 1.5
+  },
+  "fit": {
+    "success": true,
+    "cost": 117632.89720439242,
+    "nfev": 14,
+    "fit_seconds": 5.47,
+    "step_rmse_calibrated": 0.766919,
+    "step_rmse_textbook": 1.959276
+  },
+  "leave_one_group_out": [
+    {
+      "test_group": 0,
+      "params": {
+        "v0": 19.373034,
+        "T": 0.549555,
+        "s0": 1.345369,
+        "a_max": 0.5,
+        "b": 3.5
+      },
+      "test_step_rmse_calibrated": 0.76586,
+      "test_step_rmse_textbook": 2.027872,
+      "fit_seconds": 4.41,
+      "nfev": 14
+    },
+    {
+      "test_group": 1,
+      "params": {
+        "v0": 19.256758,
+        "T": 0.535756,
+        "s0": 1.467908,
+        "a_max": 0.5,
+        "b": 3.5
+      },
+      "test_step_rmse_calibrated": 0.77889,
+      "test_step_rmse_textbook": 1.941058,
+      "fit_seconds": 4.57,
+      "nfev": 15
+    },
+    {
+      "test_group": 2,
+      "params": {
+        "v0": 19.214261,
+        "T": 0.5,
+        "s0": 1.733235,
+        "a_max": 0.5,
+        "b": 3.5
+      },
+      "test_step_rmse_calibrated": 0.781644,
+      "test_step_rmse_textbook": 1.995068,
+      "fit_seconds": 4.99,
+      "nfev": 16
+    },
+    {
+      "test_group": 3,
+      "params": {
+        "v0": 19.287567,
+        "T": 0.527506,
+        "s0": 1.496655,
+        "a_max": 0.5,
+        "b": 3.5
+      },
+      "test_step_rmse_calibrated": 0.754045,
+      "test_step_rmse_textbook": 1.922815,
+      "fit_seconds": 4.71,
+      "nfev": 15
+    },
+    {
+      "test_group": 4,
+      "params": {
+        "v0": 19.220207,
+        "T": 0.5238,
+        "s0": 1.439991,
+        "a_max": 0.5,
+        "b": 3.5
+      },
+      "test_step_rmse_calibrated": 0.758328,
+      "test_step_rmse_textbook": 1.906916,
+      "fit_seconds": 4.0,
+      "nfev": 13
+    }
+  ],
+  "notes": [
+    "One shared parameter set for everyone (Lane A milestone).",
+    "Fit on pooled sampled rows from all five driver groups.",
+    "LOGO block is diagnostic only; IDM.calibrated() uses `params`.",
+    "delta kept at 4; not fitted.",
+    "a_max and b sit on the bound edges (0.5 and 3.5); v0/T/s0 are interior. Step RMSE still beats textbook by a wide margin."
+  ]
+}
