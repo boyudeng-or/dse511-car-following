@@ -83,6 +83,7 @@ takes an `(n, 30, 3)` array for faster rollouts.
 |---|---|---|---|---|---|---|
 | KeepSpeed | 0.5377 | 0.7420 | −0.006 | 31.26 | 676 | 2.691 |
 | IDM textbook | 1.1993 | 1.9778 | −6.144 | 6.55 | 0 | 0.464 |
+| IDM calibrated | 0.5741 | 0.7634 | −0.064 | 9.10 | 0 | 0.484 |
 | Linear Regression (raw) | 0.4837 | 0.6497 | 0.229 | 7.04 | 400 | 0.118 |
 | **Linear Regression (physics)** | 0.4778 | 0.6365 | 0.260 | 6.66 | 28 | 0.076 |
 | Gradient Boosting (raw) | 0.4649 | 0.6219 | 0.294 | 6.32 | 145 | 0.073 |
@@ -94,6 +95,7 @@ takes an `(n, 30, 3)` array for faster rollouts.
 |---|---|---|---|---|---|---|
 | KeepSpeed | 0.5377 | 0.7401 ± 0.0023 | −0.006 | 31.38 ± 0.38 | 3437 | 2.909 |
 | IDM textbook | 1.1646 | 1.9169 ± 0.0438 | −5.751 | 6.67 ± 0.14 | 0 | 0.470 |
+| IDM calibrated | 0.5762 | 0.7668 ± 0.0070 | −0.080 | 9.23 ± 0.30 | 0 | 0.496 |
 | Linear Regression (raw) | 0.4849 | 0.6501 ± 0.0024 | 0.224 | 6.89 ± 0.10 | 2020 | 0.112 |
 | **Linear Regression (physics)** | 0.4787 | 0.6367 ± 0.0019 | 0.256 | 6.57 ± 0.11 | 155 | 0.086 |
 | Gradient Boosting (raw) | 0.4660 | 0.6222 ± 0.0020 | 0.289 | 6.30 ± 0.12 | 664 | 0.084 |
@@ -105,6 +107,11 @@ Over the 5 groups, the raw Linear Regression crashed in about 1 in 4 drives,
 Gradient Boosting (physics) in about 1 in 20, and Linear Regression (physics) in
 about 1 in 50. Good one-step prediction does not guarantee good driving. The
 physics features mainly help in closed loop.
+
+The two IDM baselines show the same thing. Lane A's calibrated IDM is much
+better than the textbook IDM at one-step prediction (RMSE 0.77 vs 1.92), yet it
+follows the real gap worse in the 30 s drives (gap RMSE 9.2 m vs 6.7 m). Neither
+IDM ever crashes.
 
 **Limits:** these models see only the current moment, while real drivers react
 with a delay. Lane C's memory models are expected to do better on driving.
