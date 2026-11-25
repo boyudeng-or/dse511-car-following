@@ -37,6 +37,18 @@ class IDM:
     def textbook(cls) -> "IDM":
         return cls(name="idm_textbook")
 
+    @classmethod
+    def calibrated(cls) -> "IDM":
+        """One shared set fit on pairs_full (see lanes/A_data_idm/idm_calibrated.json)."""
+        return cls(
+            v0=19.256901,
+            T=0.525609,
+            s0=1.504281,
+            a_max=0.5,
+            b=3.5,
+            name="idm_calibrated",
+        )
+
     def accel(self, history: np.ndarray) -> float:
         gap, v, dv = (float(x) for x in history[-1])
         if gap <= 0.0:
