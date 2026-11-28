@@ -1,0 +1,14 @@
+[project]
+name = "dse511-car-following"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "ipykernel>=7.4.0",
+    "matplotlib>=3.8",
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "pytest>=8.0",
+    "scikit-learn>=1.4",
+    "scipy>=1.11",
+    "torch>=2.15.0",
+]
