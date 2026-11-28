@@ -1,6 +1,6 @@
 # Lane C: ML-2 with memory (Daniel)
 
-**Goal**: Same prediction as Lane B, but using memory (GRU) to improve the predictionhe last 3 seconds of 'history'.
+**Goal**: Same prediction as Lane B, but using memory (GRU) over the last 3 seconds of 'history'.
 
 **Handoff**: Three trained GRU models wrapped in the shared plug (`accel(history)`, `accel_batch(histories)`). The models differ by the number of seconds/rows they look back (1,2,30 rows).
 
@@ -29,7 +29,7 @@ In the project root run the following code
 ```python
 from lanes.C_memory.gru import load_model
 
-model = load_model("lanes/C_memory/outputs/gru_w30_test0_handoff.pt")
+model = load_model("lanes/C_memory/outputs/gru_w30_0_handoff.pt")
 model.accel(history) 
 ```
 

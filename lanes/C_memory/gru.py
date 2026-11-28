@@ -2,7 +2,7 @@
 """Lane C: GRU car-following model wrapped in the shared plug
 
 from lanes.C_memory.gru import load_model
-model = load_model("lanes/C_memory/outputs/gru_w30_0_handoff.pt)
+model = load_model("lanes/C_memory/outputs/gru_w30_0_handoff.pt")
 model.accel(history) e.g., (30, 3) array of [gap_m, speed_mps, closing_speed_mps]
 """
 
